@@ -109,7 +109,14 @@
     pdfborder={0 0 0}
 }
 
+% Macros defining the author names and initials.
+\input{preamble/authors}
+
 % Storing commands to generate the title with \maketitle.
+% Do not manually add the author name here! Add the initials to
+% preamble/authors.tex and add an entry to preamble/document_revision.tex. This
+% will automatically add the author names. This will also populate the date
+% field automatically.
 \title{Title Placeholder}
 \author{\vhListAllAuthorsLong}
 \date{Version \vhCurrentVersion\ from \vhCurrentDate}
