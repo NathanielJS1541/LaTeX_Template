@@ -160,5 +160,25 @@
     "editor.rulers": [
         80
     ],
-    "cSpell.language": "en-GB"
+    "cSpell.language": "en-GB",
+    "cSpell.words": [
+        "aboveskip",
+        "belowskip",
+        "fancyhdr",
+        "Fira",
+        "fleqn",
+        "graphicx",
+        "lastpage",
+        "leqno",
+        "letterpaper",
+        "notitlepage",
+        "onecolumn",
+        "openany",
+        "openright",
+        "opensans",
+        "titletoc",
+        "ulem",
+        "vhistory",
+        "xcolor"
+    ]
 }
