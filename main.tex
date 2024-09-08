@@ -1,0 +1,122 @@
+% Specify the document class and options.
+% Document Classes:
+% - article: Suitable for shorter documents such as journal articles, short
+%   reports, and essays. It does not support chapters.
+% - report: Ideal for longer documents like theses, dissertations, and technical
+%   reports. It supports chapters and sections.
+% - book: Used for books and other lengthy documents. It includes support for
+%   chapters, sections, and front matter (e.g., title page, dedication).
+% - letter: Designed for writing letters. It provides a simple layout for
+%   correspondence.
+% - beamer: Used for creating presentations. It offers a variety of slide
+%   layouts and themes.
+% Class Options:
+% - 10pt, 11pt, 12pt: Sets the font size of the document. The default is 10pt.
+% - a4paper, letterpaper, etc.: Specifies the paper size. Note that in this
+%   case, the geometry package is used to set the paper size.
+% - draft: Enables draft mode, which speeds up compilation by not loading images
+%   and highlighting overfull boxes.
+% - onecolumn, twocolumn: Sets the number of columns in the document.
+% - fleqn: Aligns equations to the left instead of centering them.
+% - leqno: Places equation numbers on the left side instead of the right.
+% - landscape: Changes the document layout to landscape orientation.
+% - oneside, twoside: Configures how the document prints.
+% - titlepage, notitlepage: Determines whether a separate title page is created.
+% - openright, openany: Controls whether chapters start on the right-hand page
+%   (openright) or any page (openany).
+% - british: Use British language conventions and spelling. This is best in
+%   conjunction with the babel package.
+\documentclass[british]{article}
+
+% vhistory package to create a revision history table. Specify that it should be
+% added to the Table of Contents.
+\usepackage[tocentry]{vhistory}
+% geometry package to adjust the size of the margin around the page.
+% The paper size is specified here instead of in the document class.
+\usepackage[a4paper, left=2cm, right=2cm, top=2.5cm, bottom=3cm]{geometry}
+% babel package for better language and regional rules support.
+% To change the region, change this and the document class accordingly.
+\usepackage[british]{babel}
+% xcolor package to provide driver-independent access to colours.
+\usepackage{xcolor}
+% hyperref package to create coloured hyperlinks.
+\usepackage[colorlinks]{hyperref}
+% glossaries-extra package to create a glossary of acronym and terminology
+% definitions. Also add the glossaries as numbered sections.
+\usepackage[acronym, numberedsection=autolabel, stylemods=all]{glossaries-extra}
+% caption package provides better captioning for tables etc.
+\usepackage{caption}
+% The appendix package provides more customizable appendices.
+% Options:
+% - toc: Adds a header (e.g., 'Appendices') to the Table of Contents (ToC)
+%   before listing the appendices.
+% - titletoc: Includes the appendix titles in the ToC.
+% - title: Adds a title (e.g., 'Appendices') at the beginning of the appendices
+%   section.
+% - page: Inserts a title page for the appendices.
+% - header: Adds a header to each appendix page.
+\usepackage[toc, titletoc, title, page, header]{appendix}
+% Use T1 font encoding using a wider range of characters than the default OT1
+% encoding.
+\usepackage[T1]{fontenc}
+% inputenc to specify the encoding of input files as UTF-8.
+\usepackage[utf8]{inputenc}
+% ulem allows adding underlines within the document.
+\usepackage{ulem}
+% titling package to allow access to the title, author and date throughout the
+% document. Usually they are reset after \maketitle.
+\usepackage{titling}
+% lastpage package to get the page number of the last page.
+\usepackage{lastpage}
+% graphicx package to add images to the document.
+\usepackage{graphicx}
+% fancyhdr to add custom headers and footers to the document.
+\usepackage{fancyhdr}
+% FiraSans package to change the font to Fira Sans. Set it as the default font
+% for the whole document.
+\usepackage[sfdefault]{FiraSans}
+% FiraMono package to change the monospace font to Fira Mono, and set it as the
+% default monospace font.
+\usepackage{FiraMono}
+% Alternatively, comment out the above lines and uncomment the following line to
+% use the opensans package to change the font to Open Sans, and set it as the
+% default for the whole document.
+%\usepackage[default]{opensans}
+
+% Get VC info from output of the VC Bundle package from
+% https://ctan.org/tex-archive/support/vc.
+% If vc.tex exists import it as vc.bat has been run. If it hasn't, use the
+% placeholder so the document still builds, but no commit info will show up.
+\IfFileExists{preamble/vc.tex}
+{
+    \input{preamble/vc}
+}{
+    \input{preamble/vc_placeholder}
+}
+
+% Configure the caption package.
+% Add 10pt of spacing above and below table captions.
+\captionsetup[table]{aboveskip=10pt, belowskip=10pt}
+
+% Disable hyperlink colours within the document to make printed documents easier
+% to read.
+\hypersetup{
+    % Open all bookmarks in a PDF viewer by default.
+    bookmarksopen=true,
+    % Include section numbers in the bookmarks.
+    bookmarksnumbered=true,
+    % Remove borders around links in the PDF.
+    pdfborder={0 0 0}
+}
+
+% Storing commands to generate the title with \maketitle.
+\title{Title Placeholder}
+\author{\vhListAllAuthorsLong}
+\date{Version \vhCurrentVersion\ from \vhCurrentDate}
+
+% Enough preamble... Time for the document!
+\begin{document}
+
+% TODO!
+
+\end{document}
