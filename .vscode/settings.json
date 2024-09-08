@@ -147,5 +147,7 @@
                 "vc"
             ]
         }
-    ]
+    ],
+    "rewrap.autoWrap.enabled": true,
+    "rewrap.wrappingColumn": 80
 }
