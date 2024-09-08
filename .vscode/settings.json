@@ -152,5 +152,6 @@
     "rewrap.wrappingColumn": 80,
     "editor.rulers": [
         80
-    ]
+    ],
+    "cSpell.language": "en-GB"
 }

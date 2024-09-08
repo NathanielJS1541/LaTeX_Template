@@ -6,6 +6,7 @@
         "christian-kohler.path-intellisense",
         "stkb.rewrap",
         "esbenp.prettier-vscode",
-        "file-icons.file-icons"
+        "file-icons.file-icons",
+        "streetsidesoftware.code-spell-checker"
     ]
 }
