@@ -309,6 +309,12 @@ TSWLatexianTemp*
 # Uncomment the next line to have this generated file ignored.
 #*Notes.bib
 
+# The vc bundle (https://ctan.org/tex-archive/support/vc) updates a file called
+# vc.tex based on the last commit in the repo. This shouldn't be committed, as
+# it will cause it to be updated cyclically, and just create unecessary
+# commits.
+vc.tex
+
 # -------------------------------------------------------------------------------------------------
 
 # -------------------------------------------------------------------------------------------------
