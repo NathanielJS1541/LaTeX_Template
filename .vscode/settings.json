@@ -47,6 +47,13 @@
             ],
             "env": {}
         },
+{
+            "name": "makeglossaries",
+            "command": "makeglossaries",
+            "args": [
+                "%DOCFILE%"
+            ]
+        },
         {
             "name": "pdflatex",
             "command": "pdflatex",
