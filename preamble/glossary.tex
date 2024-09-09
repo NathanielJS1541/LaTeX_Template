@@ -4,15 +4,21 @@
 % Store the \gls, \glspl, and \glsxtrshortpl as "old" commands, so they can be
 % extended or modified.
 \let\oldgls\gls
+\let\Oldgls\Gls
 \let\oldglspl\glspl
+\let\Oldglspl\Glspl
 \let\oldglsxtrshortpl\glsxtrshortpl
+\let\Oldglsxtrshortpl\Glsxtrshortpl
 
 % Redefine \gls, \glspl, and \glsxtrshortpl to use custom hyperlink formatting
 % (bold and underlined). This is more readable and easier to follow when the
 % document is printed out.
 \renewcommand{\gls}[1]{\textbf{\uline{\oldgls{#1}}}}
+\renewcommand{\Gls}[1]{\textbf{\uline{\Oldgls{#1}}}}
 \renewcommand{\glspl}[1]{\textbf{\uline{\oldglspl{#1}}}}
+\renewcommand{\Glspl}[1]{\textbf{\uline{\Oldglspl{#1}}}}
 \renewcommand{\glsxtrshortpl}[1]{\textbf{\uline{\oldglsxtrshortpl{#1}}}}
+\renewcommand{\Glsxtrshortpl}[1]{\textbf{\uline{\Oldglsxtrshortpl{#1}}}}
 
 % Customise how the "see" and "seealso" entries are rendered by renewing the
 % \glsseeformat command.
