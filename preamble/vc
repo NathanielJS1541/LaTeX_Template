@@ -32,12 +32,12 @@ logformat="${logformat}CommitterEmail: %ce%n"
 logformat="${logformat}CommitterDate: %ci%n"
 LC_ALL=C
 git --no-pager log -1 HEAD --pretty=format:"$logformat" \
-	| gawk -v script=log -v full=$full -f vc-git.awk \
-	> vc.tex
+	| gawk -v script=log -v full=$full -f ./preamble/vc-git.awk \
+	> ./preamble/vc.tex
 
 # Query modification status of the working copy
 if [ "$mod" = 1 ]; then
 	git status --porcelain=v1 \
-		| gawk -v script=status -f vc-git.awk \
-		>> vc.tex
+		| gawk -v script=status -f ./preamble/vc-git.awk \
+		>> ./preamble/vc.tex
 fi

@@ -18,7 +18,7 @@ if "%1" NEQ "" (
 )
 REM English locale.
 set LC_ALL=C
-git --no-pager log -1 HEAD --pretty=format:"Hash: %%H%%nAbrHash: %%h%%nParentHashes: %%P%%nAbrParentHashes: %%p%%nAuthorName: %%an%%nAuthorEmail: %%ae%%nAuthorDate: %%ai%%nCommitterName: %%cn%%nCommitterEmail: %%ce%%nCommitterDate: %%ci%%n" | gawk -v script=log -v full=%full% -f vc-git.awk > vc.tex
+git --no-pager log -1 HEAD --pretty=format:"Hash: %%H%%nAbrHash: %%h%%nParentHashes: %%P%%nAbrParentHashes: %%p%%nAuthorName: %%an%%nAuthorEmail: %%ae%%nAuthorDate: %%ai%%nCommitterName: %%cn%%nCommitterEmail: %%ce%%nCommitterDate: %%ci%%n" | gawk -v script=log -v full=%full% -f .\preamble\vc-git.awk > .\preamble\vc.tex
 if "%mod%"=="1" (
-  git status --porcelain=v1 |gawk -v script=status -f vc-git.awk >> vc.tex
+  git status --porcelain=v1 | gawk -v script=status -f .\preamble\vc-git.awk >> .\preamble\vc.tex
 )
