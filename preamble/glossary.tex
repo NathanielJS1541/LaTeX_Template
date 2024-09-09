@@ -1,0 +1,70 @@
+% Generate, define and style the glossaries for this document. This must be used
+% as an \input in the preamble.
+
+% Store the \gls, \glspl, and \glsxtrshortpl as "old" commands, so they can be
+% extended or modified.
+\let\oldgls\gls
+\let\oldglspl\glspl
+\let\oldglsxtrshortpl\glsxtrshortpl
+
+% Redefine \gls, \glspl, and \glsxtrshortpl to use custom hyperlink formatting
+% (bold and underlined). This is more readable and easier to follow when the
+% document is printed out.
+\renewcommand{\gls}[1]{\textbf{\uline{\oldgls{#1}}}}
+\renewcommand{\glspl}[1]{\textbf{\uline{\oldglspl{#1}}}}
+\renewcommand{\glsxtrshortpl}[1]{\textbf{\uline{\oldglsxtrshortpl{#1}}}}
+
+% Customise how the "see" and "seealso" entries are rendered by renewing the
+% \glsseeformat command.
+\renewcommand\glsseeformat[3][\seename]
+{
+    % Non-breaking new line, so the references appear on the line below the
+    % glossary entry.
+    \\*
+    % Emphasize the first parameter (default is \seename), and display the list
+    % of "see" entries as bold and underlined to be consistent with the \gls,
+    % \glspl, \glsxtrshortpl commands.
+    \emph{#1} \textbf{\uline{\glsseelist{#2}}}
+}
+
+% Generate the glossaries for this document.
+\makeglossaries
+
+% Define the terms for the glossary.
+% Example entries:
+% \newglossaryentry{box}
+% {
+%     name=box,
+%     % Specify the plural if it requires more than appending an s...
+%     plural=boxes,
+%     description={A container with a flat base and sides, typically square or
+%     rectangular, and often having a lid.}
+% }
+% \newglossaryentry{cardboard box}
+% {
+%     name=cardboard box,
+%     % Specify the plural if it requires more than appending an s...
+%     plural=cardboard boxes,
+%     description={A \gls{box} made out of cardboard.},
+%     seealso={box}
+% }
+
+% Define the acronyms for the glossary.
+% Example entries:
+% \newacronym{pdf}{PDF}{Portable Document Format.}
+% \newacronym{png}{PNG}{Portable Network Graphics.}
+% \newacronym{curl}{curl}{\Gls{curl} URL Request Library.}
+
+% Set the style of the glossary when added to a page.
+% Here is a list of common styles:
+% - 'list': A simple list of glossary entries without any grouping.
+% - 'index': Similar to 'list', but entries are sorted like an index.
+% - 'altlist': An alternative list style with a different layout.
+% - 'tree': Displays entries in a tree-like structure.
+% - 'super': A super-tabular style for multi-column glossary entries.
+% - 'long': Uses the longtable environment for multi-page glossaries.
+% - 'listhypergroup': Style groups entries by their first letter and hyperlinks
+%   each group.
+% - 'altlisthypergroup': Similar to 'listhypergroup' but with an alternative
+%   layout.
+\setglossarystyle{listhypergroup}
