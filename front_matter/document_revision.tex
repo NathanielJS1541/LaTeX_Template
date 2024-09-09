@@ -1,0 +1,35 @@
+% Document Revision Tracking.
+
+% Decrement the table number before the version history table is generated, as
+% it increments this counter but does not display a caption. This just makes the
+% rest of the document captions start at 1 which looks neater.
+\addtocounter{table}{-1}
+
+% Version history table.
+\begin{versionhistory}
+    % To add new names to the version history table, add a macro to
+    % preamble/authors.tex to link the initials here to a name. Without doing
+    % this, only the initials will appear for the document authors.
+    % Example entry for John Smith in preamble/authors.tex:
+    % \vhEntry{00.01}{1970/01/01}{JS}{Initial Draft.}
+\end{versionhistory}
+
+% Table to display information about the last git commit. If this is empty when
+% the document is rendered, ensure that either preamble/vc or preamble/vc.bat
+% have been run, and that preamble/vc.tex contains the correct information.
+% This is not intended for true version control, more as a check that the
+% revision history table above has been updated correctly.
+\begin{table}[h]
+    \begin{center}
+        \caption{Latest Change At Time Of Publishing}
+        \begin{tabular}{rl}
+            Commit          & \VCRevisionMod     \\
+            Author          & \VCAuthor          \\
+            %Author Email    & \GITAuthorEmail    \\
+            Author Date     & \GITAuthorDate     \\
+            Committer       & \GITCommitterName  \\
+            %Committer Email & \GITCommitterEmail \\
+            Commit Date     & \GITCommitterDate  \\
+        \end{tabular}
+    \end{center}
+\end{table}
