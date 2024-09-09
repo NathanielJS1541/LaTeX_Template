@@ -47,7 +47,7 @@
             ],
             "env": {}
         },
-{
+        {
             "name": "makeglossaries",
             "command": "makeglossaries",
             "args": [
@@ -132,7 +132,7 @@
         },
         {
             "name": "vc",
-            "command": "./vc.bat",
+            "command": "./preamble/vc.bat",
             "args": [
                 "-m"
             ],
