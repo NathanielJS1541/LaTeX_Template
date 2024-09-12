@@ -78,6 +78,22 @@ Your favourite flavour of package manager should make installing
 [perl](https://www.perl.org/) similarly easy, or alternatively you can see the
 [perl downloads page](https://www.perl.org/get.html) for binary releases.
 
+### Awk or Gawk
+
+`awk` or `gawk` are required to process the output of `git log` in both the
+[vc](./preamble/vc) and [vc.bat](./preamble/vc.bat) scripts from the
+[vc bundle](https://ctan.org/tex-archive/support/vc).
+
+`gawk` can be installed with [scoop](https://scoop.sh/):
+
+```pwsh
+> scoop bucket add main
+> scoop install main/gawk
+```
+
+And either `awk` or `gawk` should be available from pretty much any package
+manager on any system.
+
 ## Editor Config
 
 In an attempt to make this template easy to use for everyone, I've added some
