@@ -203,3 +203,10 @@ called when one of the `.tex` files are updated, though...
  * If using a report or book instead of an article, consider renaming this to
    chapters.
 ```
+
+### Subfolder Readmes
+
+Each subfolder contains a README, giving a more detailed explanation of the
+files within. These are linked here:
+
+- [preamble](./preamble/README.md)
