@@ -35,7 +35,10 @@ the [file descriptions section](#file-descriptions).
   commands used by `glossaries-extra` when making links for the glossary, so
   they appear bold and underlined rather than coloured. This is just to allow
   the document to be easier to read when printed, and can be commented out if
-  desired.
+  desired.  
+  **Please note that the `glossaries-extra` package automatically removes unused
+  glossary entries. If your glossary is empty, ensure the terms or acronyms are
+  referenced in your document!**
 - [vc](./vc) is a bash script from the
   [vc bundle](https://ctan.org/tex-archive/support/vc), that is used to update
   the [vc.tex](./vc.tex) file with the latest `git` commit information on
