@@ -1,3 +1,7 @@
+# -------------------------------------------------------------------------------------------------
+# TeX.gitignore
+# From https://github.com/github/gitignore/blob/main/TeX.gitignore
+
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof
@@ -118,7 +122,7 @@ acs-*.bib
 *.sls
 
 # uncomment this for glossaries-extra (will ignore makeindex's style files!)
-# *.ist
+*.ist
 
 # gnuplot
 *.gnuplot
@@ -304,3 +308,30 @@ TSWLatexianTemp*
 # option is specified. Footnotes are the stored in a file with suffix Notes.bib.
 # Uncomment the next line to have this generated file ignored.
 #*Notes.bib
+
+# The vc bundle (https://ctan.org/tex-archive/support/vc) updates a file called
+# vc.tex based on the last commit in the repo. This shouldn't be committed, as
+# it will cause it to be updated cyclically, and just create unecessary
+# commits.
+vc.tex
+
+# -------------------------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------------------------
+# VisualStudioCode.gitignore
+# From https://github.com/github/gitignore/blob/main/Global/VisualStudioCode.gitignore
+
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# Local History for Visual Studio Code
+.history/
+
+# Built Visual Studio Code Extensions
+*.vsix
+
+# -------------------------------------------------------------------------------------------------
