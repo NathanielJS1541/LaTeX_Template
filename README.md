@@ -214,3 +214,4 @@ files within. These are linked here:
 
 - [preamble](./preamble/README.md)
 - [front_matter](./front_matter/README.md)
+- [sections](./sections/README.md)
