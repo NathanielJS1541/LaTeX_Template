@@ -204,6 +204,9 @@ called when one of the `.tex` files are updated, though...
    chapters.
 ```
 
+**Note: The files and folders are in "logical" order, rather than alphabetical
+order.**
+
 ### Subfolder Readmes
 
 Each subfolder contains a README, giving a more detailed explanation of the
