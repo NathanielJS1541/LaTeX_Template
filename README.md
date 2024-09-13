@@ -210,3 +210,4 @@ Each subfolder contains a README, giving a more detailed explanation of the
 files within. These are linked here:
 
 - [preamble](./preamble/README.md)
+- [front_matter](./front_matter/README.md)
