@@ -9,7 +9,10 @@ set full=0
 set mod=0
 :loopParams
 if "%1" NEQ "" (
-  if "%1"=="-f" (set full=1) else if "%1"=="-m" (set mod=1) else (
+  REM Note the parameter expansion by using %~1 instead of %1. When run from the
+  REM LaTeX Workshop recipe in VSCode, this is required as the flags end up with
+  REM a set of quotation marks around them.
+  if "%~1"=="-f" (set full=1) else if "%~1"=="-m" (set mod=1) else (
     echo usage: vc [-f] [-m]
     exit /b 1
   )
