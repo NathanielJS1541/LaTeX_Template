@@ -1,0 +1,31 @@
+% SPDX-License-Identifier: MIT
+% Copyright (c) 2025 Nathaniel Struselis
+%
+% Fancy Header and Footer Configuration.
+
+% Use the page style defined by fancyhdr. Note that this will only take effect
+% on pages after this file is included.
+\pagestyle{fancy}
+
+% Clear all existing header and footer fields.
+\fancyhf{}
+
+% Left header containing an image or logo, if required.
+%\fancyhead[L]{\includegraphics[height=1cm]{./path/to/left_image.png}}
+% Center header containing the document title.
+\fancyhead[C]{\thetitle}
+% Right header containing an image or logo, if required.
+%\fancyhead[R]{\includegraphics[height=1cm]{./path/to/right_image.png}}
+
+% Left footer containing the document author(s) according to
+% document_revision.tex.
+\fancyfoot[L]{\theauthor}
+% Center footer containing the date field. For this template, the default is the
+% version number and the date in the form "Version XX.XX from YYYY/MM/DD".
+\fancyfoot[C]{\thedate}
+% Right footer with page number in the form "Page X of Y". Note the use of
+% \pageref* instead of \pageref, to not create a link to the last page.
+\fancyfoot[R]{Page \thepage\ of \pageref*{LastPage}}
+
+% Adjust the height of the header to fit the images.
+\setlength{\headheight}{1.2cm}

@@ -1,0 +1,23 @@
+% SPDX-License-Identifier: MIT
+% Copyright (c) 2025 Nathaniel Struselis
+%
+% Define the appearance and structure of the front matter for the start of the
+% document.
+
+% Generate the title.
+\maketitle
+
+% Document abstract. This will appear directly beneath the title.
+\begin{abstract}
+This is an extensible LaTeX document template which can be used as a generic
+starting point for a version-controlled document.
+\end{abstract}
+
+% Document revision. In an article, this will appear on the same page as the
+% title, underneath the abstract.
+\input{front_matter/document_revision}
+
+% Generate the table of contents on a new page. Without \clearpage, this will
+% appear on the same page as the title.
+\clearpage
+\tableofcontents

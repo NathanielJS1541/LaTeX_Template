@@ -1,0 +1,18 @@
+% SPDX-License-Identifier: MIT
+% Copyright (c) 2025 Nathaniel Struselis
+%
+% Document Revision Tracking.
+
+% Decrement the table number before the version history table is generated, as
+% it increments this counter but does not display a caption. This just makes the
+% rest of the document captions start at 1 which looks neater.
+\addtocounter{table}{-1}
+
+% Version history table.
+\begin{versionhistory}
+    % To add new names to the version history table, add a macro to
+    % preamble/authors.tex to link the initials here to a name. Without doing
+    % this, only the initials will appear for the document authors.
+    % Example entry for NS in preamble/authors.tex:
+    \vhEntry{TBC}{2025/10/06}{NS}{Initial revision.}
+\end{versionhistory}
