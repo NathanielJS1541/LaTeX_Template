@@ -12,10 +12,152 @@ starting point for any repos based off this template.
 <!-- omit from toc -->
 ## Contents
 
+- [VSCode Setup](#vscode-setup)
+  - [LaTeX Workshop](#latex-workshop)
+  - [Paste Image](#paste-image)
+  - [Trailing Spaces](#trailing-spaces)
+  - [Code Spell Checker](#code-spell-checker)
+  - [Markdown All in One](#markdown-all-in-one)
+  - [Editor Settings](#editor-settings)
 - [Conventional Commits](#conventional-commits)
   - [Breaking Changes](#breaking-changes)
   - [Types](#types)
   - [Scopes](#scopes)
+
+## VSCode Setup
+
+This repo contains a [VSCode workspace](.vscode/) to make setup easier. Simply
+open this repo in VSCode and install the recommended VSCode extensions:
+
+- [LaTeX Workshop](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop):
+  This extension does a majority of the heavy lifting when working with `.tex`
+  files including preview, syntax highlighting, linting, formatting,
+  intellisense and more. Note that this extension does have some
+  [requirements](#latex-workshop).
+- [Paste Image](https://marketplace.visualstudio.com/items?itemName=mushan.vscode-paste-image):
+  Allows pasting images directly into markdown documents, and has been
+  configured in this workspace to allow pasting directly into `.tex` documents.
+- [Trailing Spaces](https://marketplace.visualstudio.com/items?itemName=shardulm94.trailing-spaces):
+  This just highlights trailing whitespace, which helps keeps the document
+  source neater.
+- [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker):
+  A spell checker that supports most source files.
+- [Markdown All in One](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one):
+  This extension makes it trivial to work with Markdown files in VSCode,
+  allowing easy previewing and linting to make repo documentation easy to
+  maintain.
+
+> [!NOTE]
+> Most of these extensions have been configured in the shared workspace. Any
+> changes are detailed below.
+
+### LaTeX Workshop
+
+The [LaTeX Workshop](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop)
+extension requires a compatible LaTeX distribution to be available on the system
+PATH. See the
+[installation requirements](https://github.com/James-Yu/LaTeX-Workshop/wiki/Install#requirements)
+for a list of compatible distributions, and make sure you have one installed.
+_Note that you may need to restart VSCode after installing a distribution for it
+to be recognised!_
+
+The following [workspace settings](.vscode/settings.json) have been configured
+for LaTeX Workshop:
+
+```jsonc
+{
+  // Disable auto clean and retry for LaTeX builds, as if a build fails there is
+  // likely an issue that requires fixing manually.
+  "latex-workshop.latex.autoBuild.cleanAndRetry.enabled": false,
+  // Enable cleaning of the outDir subfolders during build, as the outDir has
+  // been specified to a non-root location.
+  "latex-workshop.latex.clean.subfolder.enabled": true,
+  // Specify a separate outDir to ensure that any artifacts of previews / builds
+  // are separated from the source.
+  "latex-workshop.latex.outDir": "%DIR%/build",
+}
+```
+
+### Paste Image
+
+[Paste Image](https://marketplace.visualstudio.com/items?itemName=mushan.vscode-paste-image)
+has been configured to allow pasting into the LaTeX document, won't be able to
+paste images into Markdown documents with how it has been configured in the
+[workspace settings](.vscode/settings.json):
+
+```jsonc
+{
+  // Configure Paste Image to insert a LaTeX graphic when pasting an image.
+  "pasteImage.insertPattern": "\"\\\\begin{center}\\n\\t\\t\\\\includegraphics[width=\\\\linewidth]{${imageSyntaxPrefix}${imageFilePath}${imageSyntaxSuffix}}\\n\\t\\\\end{center}\"",
+  // Configure Paste Image to save images to the root images/ directory.
+  "pasteImage.path": "${currentFileDir}/images",
+  // When pasting an image, show a prompt to confirm the image path.
+  "pasteImage.showFilePathConfirmInputBox": true,
+}
+```
+
+### Trailing Spaces
+
+[Trailing Spaces](https://marketplace.visualstudio.com/items?itemName=shardulm94.trailing-spaces)
+has simply been configured to only automatically trim trailing whitespace from
+modified lines, to prevent it from causing unnecessary churn when opening large
+documents:
+
+```json
+{
+  "trailing-spaces.deleteModifiedLinesOnly": true
+}
+```
+
+### Code Spell Checker
+
+[Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker)
+has been configured to use `en-GB` by default:
+
+```json
+{
+  "cSpell.language": "en-GB",
+}
+```
+
+You can easily change this to your preferred locale through the extension
+settings.
+
+### Markdown All in One
+
+[Markdown All in One](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one)
+is a great quality-of-life extension when maintaining Markdown documents. In
+this case it's simply configured to only generate Table of Contents (ToC)
+entries for levels 2 to 6, as I find it more useful than having the document
+heading displayed in the ToC:
+
+```json
+{
+  "markdown.extension.toc.levels": "2..6",
+}
+```
+
+### Editor Settings
+
+I've also added a couple of settings to the workspace for the editor itself:
+
+```jsonc
+{
+  // Use independent color pools for each bracket type to improve readability.
+  "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
+  // Display vertical rulers at columns 80 and 100 to help maintain line length.
+  "editor.rulers": [
+    80,
+    100
+  ],
+  // Wrap text at the specified word wrap column for better display formatting.
+  "editor.wordWrap": "wordWrapColumn",
+}
+```
+
+These are just visual features within the editor, but I particularly like the
+rulers as I prefer to keep all documents to a line length of 80 characters where
+possible.
 
 ## Conventional Commits
 
@@ -52,7 +194,7 @@ or re-worked.
 
 The `feat` and `fix` types are defined in the
 [conventional commit specification](https://www.conventionalcommits.org/en/v1.0.0/),
-and are mandatory. 
+and are mandatory.
 
 - `feat`: Adding a new feature. In the context of a version-controlled document,
   this could indicate a new section being added to the document, or a large

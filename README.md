@@ -23,6 +23,7 @@ document.
 ## Contents
 
 - [Template Structure](#template-structure)
+- [IDE](#ide)
 - [Conventional Commits](#conventional-commits)
 - [Repository Configuration Recommendations](#repository-configuration-recommendations)
 - [License](#license)
@@ -32,11 +33,22 @@ document.
 
 ```text
 LaTeX_Template                   # Repo root.
+ ├─ .vscode/                     # VSCode shared workspace files.
+ ├─ build/                       # Build output dir for LaTeX Workshop.
+ ├─ .gitignore                   # .gitignore file.
  ├─ CONTRIBUTING.md              # Contribution guidelines.
  ├─ LICENSE                      # MIT License for the template.
- ├─ README.md                    # Main template README (You are here!).
- └─ main.tex                     # Main entry point for the .tex document.
+ └─ README.md                    # Main template README (You are here!).
 ```
+
+## IDE
+
+This template is designed around the use of
+[VSCode](https://code.visualstudio.com/) as an IDE since it is freely available
+and relatively easy to use.
+
+To configure [VSCode](https://code.visualstudio.com/) for use with LaTeX, see
+the [VSCode Setup section of CONTRIBUTING.md](./CONTRIBUTING.md#vscode-setup).
 
 ## Conventional Commits
 
