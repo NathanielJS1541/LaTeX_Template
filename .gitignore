@@ -1,4 +1,12 @@
 # ------------------------------------------------------------------------------
+# Repo-specific ignore files.
+
+## Output build directory for LaTeX Workshop.
+build/
+
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 # TeX.gitignore
 # From https://github.com/github/gitignore/blob/main/TeX.gitignore
 
