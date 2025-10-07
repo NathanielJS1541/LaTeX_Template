@@ -23,6 +23,7 @@ starting point for any repos based off this template.
   - [Breaking Changes](#breaking-changes)
   - [Types](#types)
   - [Scopes](#scopes)
+- [Document Revision History](#document-revision-history)
 
 ## VSCode Setup
 
@@ -232,3 +233,18 @@ The following scopes are defined for this repository:
 - `release`: Changes to the CI system the affect release builds.
 - `config`: Changes to configuration files used by the CI system.
 - `figures`: Addition or changes to figures included in the document.
+
+## Document Revision History
+
+The LaTeX document contains a section for the revision history. Although a
+`CHANGELOG` will be generated based off of the commit history when the document
+is released, it can often be beneficial to keep a revision summary within the
+document itself, so that it can be tracked even when printed.
+
+This revision history **must** be manually edited in
+[./front_matter/document_revision.tex](./front_matter/document_revision.tex),
+using initials defined in [./preamble/authors.tex](./preamble/authors.tex). This
+must be done as the last commit before each release, and the user should add a
+short summary of the revision.
+
+This should be done using a `chore(release):` commit.

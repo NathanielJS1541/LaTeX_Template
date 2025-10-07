@@ -35,11 +35,20 @@ document.
 LaTeX_Template                   # Repo root.
  ├─ .vscode/                     # VSCode shared workspace files.
  ├─ build/                       # Build output dir for LaTeX Workshop.
+ ├─ front_matter/                # .tex files defining the front matter.
+ ├─ images/                      # Image files used in figures.
+ ├─ preamble/                    # .tex files defining the preamble contents.
+ ├─ sections/                    # .tex files defining the main sections.
  ├─ .gitignore                   # .gitignore file.
+ ├─ appendices.tex               # Appendices definitions.
  ├─ CONTRIBUTING.md              # Contribution guidelines.
  ├─ LICENSE                      # MIT License for the template.
+ ├─ main.tex                     # Main entry point for the .tex document.
  └─ README.md                    # Main template README (You are here!).
 ```
+
+All directories that should be modified by contributors contain their own
+`README.md` files.
 
 ## IDE
 
