@@ -230,7 +230,7 @@ to the area of the repository that a commit changes.
 
 The following scopes are defined for this repository:
 
-- `release`: Changes to the CI system the affect release builds.
+- `release`: Changes in preparation for release, i.e. version bumps.
 - `config`: Changes to configuration files used by the CI system.
 - `figures`: Addition or changes to figures included in the document.
 
