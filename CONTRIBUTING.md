@@ -227,7 +227,6 @@ Additionally, the following types are suggested by
 - `style`: In the context of a version-controlled document could indicate
   changes to the presentation of the document rather than changes to the
   contents (i.e. changes to the font or the border size).
-- `test`: Changes to code / commit linter configuration files and scripts.
 
 ### Scopes
 
