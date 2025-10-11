@@ -1,0 +1,59 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2025 Nathaniel Struselis
+#
+# GitHub Actions workflow to lint commit messages using git-cliff, ensuring that
+# they all follow the Conventional Commits specification
+# (https://www.conventionalcommits.org/en/v1.0.0).
+
+name: Lint Commits
+
+# Trigger the workflow on all pull requests.
+#
+# Note that if you use a squash-and-merge strategy, you could have this only run
+# on protected branches to ensure that all commits are squashed and conventional
+# before being merged into protected branches. Users could PR into other
+# branches to perform the squash, before PRing into the protected branch.
+on:
+  pull_request:
+    # (OPTIONAL) Only lint PRs into the main branch to allow users to use a
+    # squash-and-merge strategy into feature branches without the linter
+    # running.
+    #branches:
+    #  - main
+
+jobs:
+  ensure-conventional:
+    name: Ensure Conventional Commits
+    runs-on: ubuntu-latest
+    steps:
+
+      # Checkout the HEAD of the PR with full history to generate a prospective
+      # changelog. Checking out the PR HEAD is important, as a merge commit for
+      # the PR is checked out by default, which is not conventional and wouldn't
+      # generate a useful changelog.
+      - name: Checkout PR HEAD
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          # Ensure the full history is fetched for commit linting.
+          fetch-depth: 0
+
+      # Install git-cliff on the runner using
+      # https://github.com/taiki-e/install-action.
+      #
+      # Note that orhun/git-cliff-action@v4 could be used, but it always outputs
+      # to a file. In this case, it is better to manually install git-cliff to
+      # allow more control over its execution.
+      - name: Install git-cliff
+        uses: taiki-e/install-action@v2
+        with:
+          tool: git-cliff
+
+      # Run git-cliff with the main cliff.toml config file that requires
+      # conventional commits. If any commits are unconventional it will return
+      # an error and display the non-conventional commits.
+      #
+      # This will also output a preview of the changelog that would be generated
+      # for the PR.
+      - name: Lint Commits and Preview Changelog
+        run: git cliff --config cliff.toml
