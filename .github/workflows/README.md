@@ -33,6 +33,17 @@ Replacing `FF_PAT` with the name of your access token.
 > [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens),
 > this workflow will not be able to trigger other workflows when merging.
 
+### [Lint Commits](./lint-commits.yml)
+
+[lint-commits.yml](./lint-commits.yml) uses [git-cliff](https://git-cliff.org/)
+to lint all commits in the repo with every PR, ensuring that they conform to the
+[Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0)
+specification.
+
+The main [cliff.toml](../../cliff.toml) is used as the configuration file to
+configure `git-cliff`, which should require conventional commits for this
+workflow to function correctly.
+
 ## [Pull Request](./pull-request.yml)
 
 This workflow simply monitors the commits in a PR, and checks whether they can

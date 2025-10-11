@@ -23,9 +23,13 @@ document.
 ## Contents
 
 - [Template Structure](#template-structure)
+- [Consuming This Template](#consuming-this-template)
 - [IDE](#ide)
 - [Conventional Commits](#conventional-commits)
 - [Repository Configuration Recommendations](#repository-configuration-recommendations)
+- [`git-cliff` Configuration](#git-cliff-configuration)
+  - [Configure the Repo URL](#configure-the-repo-url)
+  - [Commit Parsers](#commit-parsers)
 - [License](#license)
   - [What This Means For You](#what-this-means-for-you)
 
@@ -33,6 +37,7 @@ document.
 
 ```text
 LaTeX_Template                   # Repo root.
+ ├─ .github/                     # GitHub files i.e. workflows, templates, etc.
  ├─ .vscode/                     # VSCode shared workspace files.
  ├─ build/                       # Build output dir for LaTeX Workshop.
  ├─ front_matter/                # .tex files defining the front matter.
@@ -41,6 +46,7 @@ LaTeX_Template                   # Repo root.
  ├─ sections/                    # .tex files defining the main sections.
  ├─ .gitignore                   # .gitignore file.
  ├─ appendices.tex               # Appendices definitions.
+ ├─ cliff.toml                   # git-cliff configuration file.
  ├─ CONTRIBUTING.md              # Contribution guidelines.
  ├─ LICENSE                      # MIT License for the template.
  ├─ main.tex                     # Main entry point for the .tex document.
@@ -49,6 +55,23 @@ LaTeX_Template                   # Repo root.
 
 All directories that should be modified by contributors contain their own
 `README.md` files.
+
+## Consuming This Template
+
+> [!TIP]
+> Remove this section after consuming this template and configuring your repo.
+
+After creating a GitHub repo based on this template, there are a few things that
+you should configure to ensure that the workflows work correctly, and that the
+conventional commit configuration is correct for your document. These are all
+described in other sections, but are all linked here for convenience:
+
+<!-- no toc -->
+- [Repo Configuration](#repository-configuration-recommendations)
+- [Define Conventional Commit Types](./CONTRIBUTING.md#types)
+- [Define Conventional Commit Scopes](./CONTRIBUTING.md#scopes)
+- [`git-cliff` Configuration](#git-cliff-configuration)
+- [Review the LICENSE](#license)
 
 ## IDE
 
@@ -106,6 +129,50 @@ repository as follows:
   history at all, but requires more knowledge of `git` to manage.
 - Enable release immunity to ensure old versions of the document cannot be
   updated.
+
+## `git-cliff` Configuration
+
+> [!TIP]
+> Remove this section after consuming this template and configuring your repo.
+
+The [`git-cliff` configuration file](./cliff.toml) has a few **required**
+modifications to ensure that it is set up to work for your repo, rather than the
+template. These are listed below, but you may wish to make other changes to that
+file to suit your versioning strategy.
+
+### Configure the Repo URL
+
+The `<REPO>` URL is specified in the `commit_preprocessors`, and is used to
+generate links to issues in the changelog. Ensure that you update the `<REPO>`
+definition in the `postprocessors` section so that the links are generated with
+the correct URL:
+
+```toml
+postprocessors = [
+    # Replace the placeholder <REPO> with a URL.
+    { pattern = '<REPO>', replace = "https://github.com/YourName/YourRepo" },
+]
+```
+
+### Commit Parsers
+
+The commit parsers group commits within each release into named "sections".
+Ensure that these sections match the types you define in your
+[CONTRIBUTING.md document](./CONTRIBUTING.md#types). For example:
+
+```toml
+commit_parsers = [
+    { message = "^feat", group = "<!-- 0 -->🚀 Features" },
+    { message = "^fix", group = "<!-- 1 -->🐛 Fixes" },
+    { message = "^docs", group = "<!-- 2 -->📚 Documentation" },
+    { message = "^ci", group = "<!-- 3 -->🛠️ CI/CD" },
+    { message = "^style", group = "<!-- 4 -->🎨 Styling" },
+    { message = "^chore\\(release\\)", skip = true },
+    { message = "^chore", group = "<!-- 5 -->⚙️ Miscellaneous Tasks" },
+    { message = "^revert", group = "<!-- 6 -->◀️ Revert" },
+    { message = ".*", group = "<!-- 7 -->💼 Other" },
+]
+```
 
 ## License
 

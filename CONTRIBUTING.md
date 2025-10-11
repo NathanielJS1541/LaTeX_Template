@@ -30,6 +30,8 @@ starting point for any repos based off this template.
 This repo contains a [VSCode workspace](.vscode/) to make setup easier. Simply
 open this repo in VSCode and install the recommended VSCode extensions:
 
+- [GitHub Actions](https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-github-actions):
+  Useful when creating and maintaining GitHub Actions.
 - [LaTeX Workshop](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop):
   This extension does a majority of the heavy lifting when working with `.tex`
   files including preview, syntax highlighting, linting, formatting,
@@ -43,6 +45,9 @@ open this repo in VSCode and install the recommended VSCode extensions:
   source neater.
 - [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker):
   A spell checker that supports most source files.
+- [Even Better TOML](https://marketplace.visualstudio.com/items?itemName=tamasfe.even-better-toml):
+  Adds language support for TOML, which is used by the `git-cliff` configuration
+  files.
 - [Markdown All in One](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one):
   This extension makes it trivial to work with Markdown files in VSCode,
   allowing easy previewing and linting to make repo documentation easy to
@@ -175,6 +180,11 @@ as a [breaking change](#breaking-changes).
 This section won't go into much detail about how to structure a
 [Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/), and
 assumes some level of familiarity with the standard.
+
+> [!IMPORTANT]
+> Any changes to the [types](#types) section in this document **must** be
+> reflected in the [git-cliff config](./cliff.toml) file, to ensure that they
+> show up in the changelogs.
 
 ### Breaking Changes
 
