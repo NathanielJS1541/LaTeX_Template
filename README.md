@@ -23,6 +23,7 @@ document.
 ## Contents
 
 - [Template Structure](#template-structure)
+- [Release Strategy](#release-strategy)
 - [Consuming This Template](#consuming-this-template)
 - [IDE](#ide)
 - [Conventional Commits](#conventional-commits)
@@ -30,6 +31,7 @@ document.
 - [`git-cliff` Configuration](#git-cliff-configuration)
   - [Configure the Repo URL](#configure-the-repo-url)
   - [Commit Parsers](#commit-parsers)
+- [Workflow Configuration](#workflow-configuration)
 - [License](#license)
   - [What This Means For You](#what-this-means-for-you)
 
@@ -56,6 +58,13 @@ LaTeX_Template                   # Repo root.
 All directories that should be modified by contributors contain their own
 `README.md` files.
 
+## Release Strategy
+
+The workflows within this repo are set up to create a release whenever any
+changes are pushed to `main`. The document version will be automatically bumped
+based on the conventional commits, and releases and changelogs will
+automatically be published to GitHub.
+
 ## Consuming This Template
 
 > [!TIP]
@@ -71,6 +80,7 @@ described in other sections, but are all linked here for convenience:
 - [Define Conventional Commit Types](./CONTRIBUTING.md#types)
 - [Define Conventional Commit Scopes](./CONTRIBUTING.md#scopes)
 - [`git-cliff` Configuration](#git-cliff-configuration)
+- [Workflow Configuration](#workflow-configuration)
 - [Review the LICENSE](#license)
 
 ## IDE
@@ -173,6 +183,24 @@ commit_parsers = [
     { message = ".*", group = "<!-- 7 -->💼 Other" },
 ]
 ```
+
+## Workflow Configuration
+
+> [!TIP]
+> Remove this section after consuming this template and configuring your repo.
+
+[fast-forward.yml](./.github/workflows/fast-forward.yml) and
+[pull-request.yml](./.github/workflows/pull-request.yml) are optional workflows
+that allow you to perform fast-forward merges in GitHub. If you don't require
+this, then you can safely delete them.
+
+If you wish to use them, the
+[fast-forward.yml](./.github/workflows/fast-forward.yml) workflow requires you
+to delete a line from the workflow, or create a
+[personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens).
+
+For more information, see
+[the workflow README.md](./.github/workflows/README.md#fast-forward).
 
 ## License
 

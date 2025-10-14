@@ -3,6 +3,24 @@
 This directory contains the GitHub workflows for this template. Each workflow
 and any supporting files will be documented here.
 
+### [Build LaTeX](./build-latex.yml)
+
+[build-latex.yml](./build-latex.yml) is a reusable workflow that can be used to
+build a LaTeX document, and upload the resulting PDF as an artifact.
+
+### [Build Release](./build-release.yml)
+
+[build-release.ym](./build-release.yml) contains the main build workflow for
+this repo. It will:
+
+- Automatically generate a changelog and bump the version number, based on new
+  conventional commits.
+- Build the LaTeX document using [build-latex.yml](./build-latex.yml).
+- Create a new Release on GitHub, uploading the document `.pdf` and changelog.
+
+This will happen whenever any changes are pushed to `main`, which _should_ be
+through PR's!
+
 ### [Fast Forward](./fast-forward.yml)
 
 A workflow that allows using the `/fast-forward` command to complete a PR, and
