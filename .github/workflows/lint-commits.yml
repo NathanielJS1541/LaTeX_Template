@@ -4,6 +4,9 @@
 # GitHub Actions workflow to lint commit messages using git-cliff, ensuring that
 # they all follow the Conventional Commits specification
 # (https://www.conventionalcommits.org/en/v1.0.0).
+#
+# This workflow also ensures that the proposed version bump is reflected in the
+# LaTeX document's revision field.
 
 name: Lint Commits
 
@@ -25,6 +28,8 @@ jobs:
   ensure-conventional:
     name: Ensure Conventional Commits
     runs-on: ubuntu-latest
+    outputs:
+      proposed_version: ${{ steps.version-bump.outputs.proposed_version }}
     steps:
 
       # Checkout the HEAD of the PR with full history to generate a prospective
@@ -57,3 +62,45 @@ jobs:
       # for the PR.
       - name: Lint Commits and Preview Changelog
         run: git cliff --config cliff.toml
+
+      # Determine the proposed version bump based on the commits in the PR.
+      - name: Propose Version Bump
+        id: version-bump
+        run: |
+          # Use git-cliff to get the proposed version bump.
+          version="$(git-cliff --bumped-version)"
+
+          # Strip any leading 'v' if present to get a clean version number.
+          version="${version//v}"
+
+          echo "Proposed version bump: $version"
+          echo "proposed_version=$version" >> "$GITHUB_OUTPUT"
+
+  # Ensure that the document revision in the LaTeX source is updated to
+  # match the new version.
+  ensure-document-revision:
+    name: Ensure Document Revision is Updated
+    runs-on: ubuntu-latest
+    needs: ensure-conventional
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+
+      # Ensure that the LaTeX document's revision field is updated to match the
+      # new version. This step modifies the LaTeX source file and commits the
+      # change if necessary.
+      - name: Check for Document Revision
+        run: |
+          target_version="${{ needs.ensure-conventional.outputs.proposed_version }}"
+          echo "Checking ./front_matter/document_revision.tex for $target_version..."
+
+          # Check document_revision.tex for the proposed bumped version. Cause
+          # an error if it isn't present.
+          if grep "$target_version" ./front_matter/document_revision.tex; then
+            echo "Document revision is up to date."
+            exit 0
+          else
+            echo "document_revision.tex doesn't contain $target_version!"
+            echo "Update document_revision.tex to include $target_version."
+            exit 1
+          fi
