@@ -1,0 +1,132 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2025 Nathaniel Struselis
+#
+# GitHub Actions workflow to build the LaTeX document, version it using
+# git-cliff, and deploy it as a release on GitHub.
+
+name: Build and Release Document
+
+# Define environment variables for reuse in the workflow, so that they can be
+# easily updated in one place.
+env:
+  CLIFF_OUTPUT: CHANGELOG.md
+  DOCUMENT_BASE_NAME: LaTeX_Template
+
+# Releases will be triggered by changes pushed to main.
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write  # To create tags and releases.
+
+jobs:
+  prep:
+    name: Prepare Version and Changelog
+    runs-on: ubuntu-latest
+    outputs:
+      changelog: ${{ steps.git-cliff.outputs.content }}
+      version: ${{ steps.sanitise-version.outputs.version }}
+      filename: ${{ steps.generate-filename.outputs.filename }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0  # Fetch full history for changelog generation.
+
+      # Use git-cliff to generate a changelog and determine the next version.
+      #
+      # This will generate a changelog for all unreleased changes and bump the
+      # version based on commit messages since the last tag.
+      - name: git-cliff
+        id: git-cliff
+        uses: orhun/git-cliff-action@v4
+        with:
+          version: latest
+          config: cliff.toml
+          args: "--unreleased --bump"
+        env:
+          OUTPUT: ${{ env.CLIFF_OUTPUT }}
+
+      # Upload the generated changelog for use in subsequent jobs.
+      - id: upload-changelog
+        name: Upload Changelog Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: changelog
+          path: ${{ env.CLIFF_OUTPUT }}
+          if-no-files-found: error
+
+      # Sanitise the version number to ensure it has a single 'v' prefix.
+      - name: Sanitise Version
+        id: sanitise-version
+        run: |
+          version="${{ steps.git-cliff.outputs.version }}"
+          version="v${version//v}"
+          echo "Sanitised version: $version"
+          echo "version=$version" >> $GITHUB_OUTPUT
+
+      # Generate the file name for the PDF based on the base name and version.
+      - name: Generate File Name
+        id: generate-filename
+        run: |
+          echo "Generating filename for version ${{ steps.git-cliff.outputs.version }}"
+          filename="${{ env.DOCUMENT_BASE_NAME }}_${{ steps.sanitise-version.outputs.version }}"
+          echo "Generated filename: $filename"
+          echo "filename=$filename" >> $GITHUB_OUTPUT
+
+  build:
+    name: Build LaTeX Document
+    uses: ./.github/workflows/build-latex.yml
+    needs: prep
+    with:
+      artifact-name: latex-build
+      document-name: ${{ needs.prep.outputs.filename }}
+
+  release:
+    name: Create Release
+    needs: [prep, build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+
+      - name: Download Build Artifacts
+        id: download-latex
+        uses: actions/download-artifact@v5
+        with:
+          name: latex-build
+
+      - name: Download Changelog Artifact
+        id: download-changelog
+        uses: actions/download-artifact@v5
+        with:
+          name: changelog
+
+      # Create a draft release with the generated changelog and attach the PDF.
+      # This is needed for repos that use "immutable releases", since otherwise
+      # the release would be finalised before the PDF is attached causing an
+      # error.
+      #
+      # This also tags the commit with the release.
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.prep.outputs.version }}
+          draft: true
+          body: ${{ needs.prep.outputs.changelog }}
+          files: |
+            ${{ steps.download-latex.outputs.download-path }}/*.pdf
+            ${{ steps.download-changelog.outputs.download-path }}/${{ env.CLIFF_OUTPUT }}
+        env:
+          GIT_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Publish the release now that the PDF and changelog have been attached.
+      # The release becomes immutable after this step if immutable releases are
+      # enabled.
+      - name: Publish Draft Release
+        run: |
+          gh release edit ${{ needs.prep.outputs.version }} --draft=false
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

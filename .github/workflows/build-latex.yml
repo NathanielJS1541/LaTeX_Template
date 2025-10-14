@@ -1,0 +1,95 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2025 Nathaniel Struselis
+#
+# GitHub Actions workflow to build a LaTeX document.
+#
+# Note that this workflow is intended to be called by other workflows, after the
+# repo has been checked out. It is not intended to be run directly.
+
+name: Build LaTeX Document
+
+# Define environment variables for reuse in the workflow, so that they can be
+# easily updated in one place.
+env:
+  BUILD_DIR: build
+
+on:
+  workflow_call:
+    inputs:
+      document-name:
+        description: "The name to use for the generated PDF document (without the .pdf extension)."
+        required: true
+        type: string
+      artifact-name:
+        description: "The name to use for the uploaded PDF artifact."
+        required: true
+        type: string
+
+jobs:
+  build-latex:
+    name: Build LaTeX Document
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+
+      # Install packages required to build LaTeX documents. This includes:
+      # - texlive: The core LaTeX distribution.
+      # - texlive-fonts-extra: Additional fonts for LaTeX.
+      # - latexmk: A Perl script that automates the process of building LaTeX
+      #   documents, handling multiple runs to resolve references.
+      #
+      # These packages have been selected to provide a good balance between
+      # install time/size and functionality for most LaTeX documents. Basic
+      # documents may be built with just texlive or texlive-base, but more
+      # complex documents may require something like texlive-latex-extra or
+      # texlive-full.
+      #
+      # Adjust this step based on the requirements of your LaTeX document.
+      - name: Install LaTeX Dependencies
+        run: |
+          echo "Updating package lists..."
+          sudo apt-get update
+
+          echo "Installing LaTeX dependencies..."
+          sudo apt-get install -y \
+            texlive \
+            texlive-fonts-extra \
+            latexmk
+
+      # Build the LaTeX document using latexmk. latexmk is a Perl script that
+      # automatically runs LaTeX the correct number of times to resolve
+      # cross-references, bibliographies, and indexes.
+      #
+      # The following arguments are specified:
+      # - -pdf: Generate a PDF output.
+      # - -interaction=nonstopmode: Prevents interactive prompts on errors.
+      # - -halt-on-error: Stops the build on the first error encountered.
+      # - -outdir=build: Use the 'build' directory for output files.
+      # - -jobname=${{ inputs.document-name }}: Set the output file name.
+      - id: build-latex
+        name: Build LaTeX document
+        run: |
+          # Create the build directory if it doesn't exist.
+          mkdir -p ${{ env.BUILD_DIR }}
+
+          # Build the document using latexmk.
+          latexmk \
+            -pdf \
+            -interaction=nonstopmode \
+            -halt-on-error \
+            -outdir=${{ env.BUILD_DIR }} \
+            -jobname=${{ inputs.document-name }} \
+            main.tex
+
+          # Output the path to the generated PDF as a step output.
+          echo "pdf=build/${{ inputs.document-name }}.pdf" >> $GITHUB_OUTPUT
+
+      # Upload the generated PDF as an artifact for use in subsequent jobs.
+      - id: upload-pdf
+        name: Upload PDF Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: ${{ steps.build-latex.outputs.pdf }}
+          if-no-files-found: error
