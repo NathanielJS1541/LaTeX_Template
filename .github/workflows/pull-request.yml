@@ -1,0 +1,32 @@
+# Workflow to check whether the commits in a PR can be fast-forwarded, and post
+# a comment on the PR with the result.
+#
+# This workflow is based on the example from sequoia-pgp/fast-forward GitHub,
+# which is licensed under GPL v2: https://github.com/sequoia-pgp/fast-forward.
+
+name: Check Pull Request for Fast Forward
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+jobs:
+  check-fast-forward:
+    name: Check Fast Forward Compatibility
+    runs-on: ubuntu-latest
+
+    # Permissions required to check whether a fast forward is possible, and post
+    # comments on active PRs.
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+
+    # Check if the fast-forward is possible, and post a comment on the PR with
+    # the result.
+    steps:
+      - name: Check if Fast Forwarding is Possible
+        uses: sequoia-pgp/fast-forward@v1
+        with:
+          merge: false
+          comment: always

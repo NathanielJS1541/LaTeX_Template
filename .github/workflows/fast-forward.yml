@@ -1,0 +1,44 @@
+# Workflow to monitor pull request comments for the /fast-forward command,
+# and perform a fast-forward merge to complete the PR.
+#
+# GitHub's default "Rebase and merge" option does not perform a true
+# fast-forward, and will always rebase all commits. This negates any GPG signing
+# of commits, so this action is used to complete pull requests with a true
+# fast-forward merge.
+#
+# This workflow is based on the example from sequoia-pgp/fast-forward GitHub,
+# which is licensed under GPL v2: https://github.com/sequoia-pgp/fast-forward.
+
+name: Fast Forward Pull Request
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+jobs:
+  fast-forward:
+    name: Fast Forward
+    # Only run if the comment contains the /fast-forward command.
+    if: ${{ contains(github.event.comment.body, '/fast-forward') && github.event.issue.pull_request }}
+    runs-on: ubuntu-latest
+
+    # Permissions required to read and write pull requests, issues, and
+    # contents in order to perform the fast-forward merge and close the PR.
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+
+    steps:
+      - name: Fast Forward and Close PR
+        uses: sequoia-pgp/fast-forward@v1
+        with:
+          # Use a Personal Access Token (PAT) allows any workflows triggered by
+          # merging the PR to run, as the default GITHUB_TOKEN does not trigger
+          # other workflows.
+          #
+          # Remove this line to use the default GITHUB_TOKEN, but note that
+          # other workflows triggered by the merge will not run.
+          github_token: ${{ secrets.FF_PAT }}
+          merge: true
+          comment: always
