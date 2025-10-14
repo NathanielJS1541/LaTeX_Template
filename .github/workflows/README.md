@@ -56,7 +56,9 @@ Replacing `FF_PAT` with the name of your access token.
 [lint-commits.yml](./lint-commits.yml) uses [git-cliff](https://git-cliff.org/)
 to lint all commits in the repo with every PR, ensuring that they conform to the
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0)
-specification.
+specification. It also checks the document revision, to ensure that each PR
+correctly updates the document revision to reflect the prospective version bump
+based on the commits in the PR.
 
 The main [cliff.toml](../../cliff.toml) is used as the configuration file to
 configure `git-cliff`, which should require conventional commits for this
