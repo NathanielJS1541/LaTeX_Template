@@ -10,7 +10,7 @@ name: Build and Release Document
 # easily updated in one place.
 env:
   CLIFF_OUTPUT: CHANGELOG.md
-  DOCUMENT_BASE_NAME: LaTeX_Template
+  DOCUMENT_BASE_NAME: ${{ github.event.repository.name }}
 
 # Releases will be triggered by changes pushed to main.
 on:
