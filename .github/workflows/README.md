@@ -21,6 +21,13 @@ this repo. It will:
 This will happen whenever any changes are pushed to `main`, which _should_ be
 through PR's!
 
+Note that the document name is derived from the repo name by default. To change
+this, edit the following line:
+
+```yaml
+DOCUMENT_BASE_NAME: ${{ github.event.repository.name }}
+```
+
 ### [Fast Forward](./fast-forward.yml)
 
 A workflow that allows using the `/fast-forward` command to complete a PR, and

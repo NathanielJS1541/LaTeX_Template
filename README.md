@@ -189,6 +189,14 @@ commit_parsers = [
 > [!TIP]
 > Remove this section after consuming this template and configuring your repo.
 
+By default, [build-release.yml](./.github/workflows/build-release.yml) will use
+the repo name as the name of the document. If you wish to change this, edit the
+following line of [build-release.yml](./.github/workflows/build-release.yml):
+
+```yaml
+DOCUMENT_BASE_NAME: ${{ github.event.repository.name }}
+```
+
 [fast-forward.yml](./.github/workflows/fast-forward.yml) and
 [pull-request.yml](./.github/workflows/pull-request.yml) are optional workflows
 that allow you to perform fast-forward merges in GitHub. If you don't require
