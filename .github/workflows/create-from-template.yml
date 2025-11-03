@@ -1,0 +1,50 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2025 Nathaniel Struselis
+#
+# GitHub Actions workflow to amend the initial commit so that it conforms to the
+# conventional commits specification when consuming this template.
+
+name: "Create Repository From Template"
+
+# This workflow runs on any push, since the default branch name is configurable
+# by the user. Creating a repository from a template will cause the "push"
+# event.
+on:
+  push:
+
+# Write permission is needed to amend the initial commit and push to the remote.
+permissions:
+  contents: write
+
+jobs:
+  amend-initial-commit:
+    name: "Amend Initial Commit"
+    # This job only runs if the repository is not a template, to avoid
+    # altering the template repository itself.
+    if: ${{ !github.event.repository.is_template }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+        with:
+          # Ensure the initial commit is available to amend.
+          fetch-depth: 0
+
+      # Remove this workflow file from the new repository.
+      - name: "Remove Template Specific Files"
+        run: |
+          rm -f "./.github/workflows/create-from-template.yml"
+
+      # Amend the initial commit with the removed workflow, and change the
+      # commit message to conform to the conventional commits specification.
+      - name: "Update Initial Commit"
+        run: |
+          # Configure the git user to the GitHub Actions actor.
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+
+          # Add the changes and amend the initial commit, updating the commit
+          # message.
+          git add .
+          git commit --amend -m "chore: initial commit"
+          git push --force-with-lease

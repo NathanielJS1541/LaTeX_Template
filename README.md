@@ -210,6 +210,12 @@ to delete a line from the workflow, or create a
 For more information, see
 [the workflow README.md](./.github/workflows/README.md#fast-forward).
 
+The
+[create-from-template.yml section](./.github/workflows/README.md#create-from-template)
+of the [workflows README.md](./.github/workflows/README.md) can be deleted after
+creating a repository from this template, as the workflow will run and delete
+itself.
+
 ## License
 
 The contents of this repository, including the basic LaTeX template, GitHub

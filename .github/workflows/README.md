@@ -28,6 +28,19 @@ this, edit the following line:
 DOCUMENT_BASE_NAME: ${{ github.event.repository.name }}
 ```
 
+### [Create From Template](./create-from-template.yml)
+
+[create-from-template.yml](./create-from-template.yml) is designed to run only
+once, when a new repository is created from the template. On the first `push`
+event to a non-template repository, it will checkout the repo, delete itself,
+and amend the initial commit to conform to the
+[Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0)
+specification.
+
+> [!TIP]
+> Remove this section after creating your repo from this template, as the
+> workflow will be deleted.
+
 ### [Fast Forward](./fast-forward.yml)
 
 A workflow that allows using the `/fast-forward` command to complete a PR, and
