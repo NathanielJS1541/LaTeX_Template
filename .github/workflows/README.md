@@ -10,7 +10,7 @@ build a LaTeX document, and upload the resulting PDF as an artifact.
 
 ### [Build Release](./build-release.yml)
 
-[build-release.ym](./build-release.yml) contains the main build workflow for
+[build-release.yml](./build-release.yml) contains the main build workflow for
 this repo. It will:
 
 - Automatically generate a changelog and bump the version number, based on new
