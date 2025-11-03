@@ -214,7 +214,11 @@ For more information, see
 
 The contents of this repository, including the basic LaTeX template, GitHub
 Actions, and basic documentation, are licensed under the
-[MIT license](https://mit-license.org/) (see [LICENSE](./LICENSE)).
+[MIT license](https://mit-license.org/) (see [LICENSE](./LICENSE)):
+
+```
+SPDX-License-Identifier: MIT
+```
 
 ### What This Means For You
 
