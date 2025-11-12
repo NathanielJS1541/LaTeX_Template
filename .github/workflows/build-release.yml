@@ -22,13 +22,39 @@ permissions:
   contents: write  # To create tags and releases.
 
 jobs:
+  eval:
+    name: Evaluate Workflow Preconditions
+    runs-on: ubuntu-latest
+    outputs:
+      should_run: ${{ steps.evaluate_run_conditions.outputs.should_run }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+
+      # Evaluate whether the workflow should run or not.
+      - name: Evaluate Run Conditions
+        id: evaluate_run_conditions
+        run: |
+          # This workflow should not run for the initial commit in the repo, as
+          # the initial template document is not a meaningful release to
+          # publish.
+          if [ "$(git rev-list --count HEAD)" -eq 1 ]; then
+            # If this is running on the first commit, do not run the workflow.
+            echo "should_run=false" >> $GITHUB_OUTPUT
+          else
+            # Otherwise, the workflow should run.
+            echo "should_run=true" >> $GITHUB_OUTPUT
+          fi
+
   prep:
     name: Prepare Version and Changelog
+    needs: [eval]
+    if: ${{ needs.eval.outputs.should_run == 'true' }}
     runs-on: ubuntu-latest
     outputs:
       changelog: ${{ steps.git-cliff.outputs.content }}
-      version: ${{ steps.sanitise-version.outputs.version }}
       filename: ${{ steps.generate-filename.outputs.filename }}
+      version: ${{ steps.sanitise-version.outputs.version }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v5
@@ -78,15 +104,17 @@ jobs:
 
   build:
     name: Build LaTeX Document
+    needs: [eval, prep]
+    if: ${{ needs.eval.outputs.should_run == 'true' }}
     uses: ./.github/workflows/build-latex.yml
-    needs: prep
     with:
       artifact-name: latex-build
       document-name: ${{ needs.prep.outputs.filename }}
 
   release:
     name: Create Release
-    needs: [prep, build]
+    needs: [eval, prep, build]
+    if: ${{ needs.eval.outputs.should_run == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
