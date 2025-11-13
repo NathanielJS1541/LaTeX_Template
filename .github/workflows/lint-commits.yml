@@ -61,13 +61,18 @@ jobs:
       # This will also output a preview of the changelog that would be generated
       # for the PR.
       - name: Lint Commits and Preview Changelog
-        run: git cliff --config cliff.toml
+        run: |
+          # Run git-cliff to lint commits. The config ensures that this will
+          # return an error if any unconventional commits are found.
+          echo "Linting commits with git-cliff..."
+          git cliff --config cliff.toml
 
       # Determine the proposed version bump based on the commits in the PR.
       - name: Propose Version Bump
         id: version-bump
         run: |
           # Use git-cliff to get the proposed version bump.
+          echo "Getting proposed version bump..."
           version="$(git-cliff --bumped-version)"
 
           # Strip any leading 'v' if present to get a clean version number.

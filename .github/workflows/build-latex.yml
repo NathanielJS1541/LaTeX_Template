@@ -71,9 +71,11 @@ jobs:
         name: Build LaTeX document
         run: |
           # Create the build directory if it doesn't exist.
+          echo "Ensuring ${{ env.BUILD_DIR }} exists..."
           mkdir -p ${{ env.BUILD_DIR }}
 
           # Build the document using latexmk.
+          echo "Building LaTeX document with latexmk..."
           latexmk \
             -pdf \
             -interaction=nonstopmode \
@@ -83,7 +85,8 @@ jobs:
             main.tex
 
           # Output the path to the generated PDF as a step output.
-          echo "pdf=build/${{ inputs.document-name }}.pdf" >> $GITHUB_OUTPUT
+          echo "LaTeX document built at ${{ env.BUILD_DIR }}/${{ inputs.document-name }}.pdf"
+          echo "pdf=${{ env.BUILD_DIR }}/${{ inputs.document-name }}.pdf" >> $GITHUB_OUTPUT
 
       # Upload the generated PDF as an artifact for use in subsequent jobs.
       - id: upload-pdf

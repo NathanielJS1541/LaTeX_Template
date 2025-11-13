@@ -33,6 +33,7 @@ jobs:
       # Remove this workflow file from the new repository.
       - name: "Remove Template Specific Files"
         run: |
+          echo "Removing create-from-template.yml workflow file..."
           rm -f "./.github/workflows/create-from-template.yml"
 
       # Amend the initial commit with the removed workflow, and change the
@@ -40,11 +41,13 @@ jobs:
       - name: "Update Initial Commit"
         run: |
           # Configure the git user to the GitHub Actions actor.
+          echo "Configuring git user..."
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor }}@users.noreply.github.com"
 
           # Add the changes and amend the initial commit, updating the commit
           # message.
+          echo "Amending initial commit..."
           git add .
           git commit --amend -m "chore: initial commit"
           git push --force-with-lease

@@ -38,11 +38,14 @@ jobs:
           # This workflow should not run for the initial commit in the repo, as
           # the initial template document is not a meaningful release to
           # publish.
+          echo "Checking current commit count..."
           if [ "$(git rev-list --count HEAD)" -eq 1 ]; then
             # If this is running on the first commit, do not run the workflow.
+            echo "Initial commit detected; skipping workflow run."
             echo "should_run=false" >> $GITHUB_OUTPUT
           else
             # Otherwise, the workflow should run.
+            echo "Multiple commits detected; running workflow."
             echo "should_run=true" >> $GITHUB_OUTPUT
           fi
 
@@ -88,7 +91,9 @@ jobs:
       - name: Sanitise Version
         id: sanitise-version
         run: |
+          echo "Getting new version number..."
           version="${{ steps.git-cliff.outputs.version }}"
+          echo "Original version: $version"
           version="v${version//v}"
           echo "Sanitised version: $version"
           echo "version=$version" >> $GITHUB_OUTPUT
@@ -97,7 +102,7 @@ jobs:
       - name: Generate File Name
         id: generate-filename
         run: |
-          echo "Generating filename for version ${{ steps.git-cliff.outputs.version }}"
+          echo "Generating filename for version ${{ steps.sanitise-version.outputs.version }}..."
           filename="${{ env.DOCUMENT_BASE_NAME }}_${{ steps.sanitise-version.outputs.version }}"
           echo "Generated filename: $filename"
           echo "filename=$filename" >> $GITHUB_OUTPUT
