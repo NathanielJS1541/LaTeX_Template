@@ -1,0 +1,114 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2025 Nathaniel Struselis
+#
+# GitHub Actions workflow to prepare variables for building the LaTeX document.
+#
+# Note that this workflow is intended to be called by other workflows. It is not
+# intended to be run directly.
+
+name: Build LaTeX Document
+
+# Define environment variables for reuse in the workflow, so that they can be
+# easily updated in one place.
+env:
+  BUILD_DIR: build
+
+on:
+  workflow_call:
+    inputs:
+      changelog-artifact-name:
+        description: "The artifact name to upload the CHANGELOG under."
+        required: false
+        default: "changelog"
+        type: string
+      changelog-name:
+        description: "The filename of the CHANGELOG to generate."
+        required: false
+        default: "CHANGELOG.md"
+        type: string
+      checkout-ref:
+        description: "The git ref to checkout when generating the CHANGELOG."
+        required: false
+        default: ${{ github.ref }}
+        type: string
+      checkout-repository:
+        description: "The git repo to checkout when generating the CHANGELOG."
+        required: false
+        default: ${{ github.repository }}
+        type: string
+      document-base-name:
+        description: "The base name to use for the generated PDF document (without the .pdf extension). The version number will be appended to this base name."
+        required: false
+        default: ${{ github.event.repository.name }}
+        type: string
+    outputs:
+      changelog:
+        description: "The generated CHANGELOG content."
+        value: ${{ jobs.prep.outputs.changelog }}
+      document-name:
+        description: "The name of the generated .pdf document, including version number but excluding the .pdf extension."
+        value: ${{ jobs.prep.outputs.filename }}
+      version:
+        description: "The bumped version number."
+        value: ${{ jobs.prep.outputs.version }}
+
+jobs:
+  prep:
+    name: Prepare Version and Changelog
+    runs-on: ubuntu-latest
+    outputs:
+      changelog: ${{ steps.git-cliff.outputs.content }}
+      filename: ${{ steps.generate-filename.outputs.filename }}
+      version: ${{ steps.sanitise-version.outputs.version }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0  # Fetch full history for changelog generation.
+          # Checkout the specified ref and repository to ensure this workflow
+          # can be used for PRs from fork repos.
+          ref: ${{ inputs.checkout-ref }}
+          repository: ${{ inputs.checkout-repository }}
+
+      # Use git-cliff to generate a changelog and determine the next version.
+      #
+      # This will generate a changelog for all unreleased changes and bump the
+      # version based on commit messages since the last tag.
+      - name: git-cliff
+        id: git-cliff
+        uses: orhun/git-cliff-action@v4
+        with:
+          version: latest
+          config: cliff.toml
+          args: "--unreleased --bump"
+        env:
+          OUTPUT: ${{ inputs.changelog-name }}
+
+      # Upload the generated changelog for use in subsequent jobs.
+      - id: upload-changelog
+        name: Upload Changelog Artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: ${{ inputs.changelog-artifact-name }}
+          path: ${{ inputs.changelog-name }}
+          if-no-files-found: error
+
+      # Sanitise the version number to ensure it has a single 'v' prefix.
+      - name: Sanitise Version
+        id: sanitise-version
+        run: |
+          echo "Getting new version number..."
+          version="${{ steps.git-cliff.outputs.version }}"
+          echo "Original version: $version"
+          version="v${version//v}"
+          echo "Sanitised version: $version"
+          echo "version=$version" >> $GITHUB_OUTPUT
+
+      # Generate the file name for the PDF based on the base name and version.
+      - name: Generate File Name
+        id: generate-filename
+        run: |
+          echo "Generating filename for version ${{ steps.sanitise-version.outputs.version }}..."
+          filename="${{ inputs.document-base-name }}_${{ steps.sanitise-version.outputs.version }}"
+          echo "Generated filename: $filename"
+          echo "filename=$filename" >> $GITHUB_OUTPUT

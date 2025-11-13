@@ -3,8 +3,8 @@
 #
 # GitHub Actions workflow to build a LaTeX document.
 #
-# Note that this workflow is intended to be called by other workflows, after the
-# repo has been checked out. It is not intended to be run directly.
+# Note that this workflow is intended to be called by other workflows. It is not
+# intended to be run directly.
 
 name: Build LaTeX Document
 
@@ -16,22 +16,43 @@ env:
 on:
   workflow_call:
     inputs:
-      document-name:
-        description: "The name to use for the generated PDF document (without the .pdf extension)."
-        required: true
-        type: string
       artifact-name:
-        description: "The name to use for the uploaded PDF artifact."
+        description: "The artifact name to upload the generated .pdf under."
         required: true
         type: string
+      checkout-ref:
+        description: "The git ref to checkout for building the document."
+        required: false
+        default: ${{ github.ref }}
+        type: string
+      checkout-repository:
+        description: "The git repo to checkout when building the document."
+        required: false
+        default: ${{ github.repository }}
+        type: string
+      document-name:
+        description: "The file name to use for the generated PDF document (without the .pdf extension)."
+        required: true
+        type: string
+    outputs:
+      artifact-url:
+        description: "The URL of the uploaded PDF artifact."
+        value: ${{ jobs.build-latex.outputs.artifact_url }}
 
 jobs:
   build-latex:
     name: Build LaTeX Document
     runs-on: ubuntu-latest
+    outputs:
+      artifact_url: ${{ steps.upload-pdf.outputs.artifact-url }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v5
+        with:
+          # Checkout the specified ref and repository to ensure this workflow
+          # can be used for PRs from fork repos.
+          ref: ${{ inputs.checkout-ref }}
+          repository: ${{ inputs.checkout-repository }}
 
       # Install packages required to build LaTeX documents. This includes:
       # - texlive: The core LaTeX distribution.
@@ -91,7 +112,7 @@ jobs:
       # Upload the generated PDF as an artifact for use in subsequent jobs.
       - id: upload-pdf
         name: Upload PDF Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ${{ inputs.artifact-name }}
           path: ${{ steps.build-latex.outputs.pdf }}

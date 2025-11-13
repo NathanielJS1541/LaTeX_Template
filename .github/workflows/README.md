@@ -3,12 +3,12 @@
 This directory contains the GitHub workflows for this template. Each workflow
 and any supporting files will be documented here.
 
-### [Build LaTeX](./build-latex.yml)
+## [Build LaTeX](./build-latex.yml)
 
 [build-latex.yml](./build-latex.yml) is a reusable workflow that can be used to
 build a LaTeX document, and upload the resulting PDF as an artifact.
 
-### [Build Release](./build-release.yml)
+## [Build Release](./build-release.yml)
 
 [build-release.yml](./build-release.yml) contains the main build workflow for
 this repo. It will:
@@ -28,7 +28,7 @@ this, edit the following line:
 DOCUMENT_BASE_NAME: ${{ github.event.repository.name }}
 ```
 
-### [Create From Template](./create-from-template.yml)
+## [Create From Template](./create-from-template.yml)
 
 [create-from-template.yml](./create-from-template.yml) is designed to run only
 once, when a new repository is created from the template. On the first `push`
@@ -41,7 +41,7 @@ specification.
 > Remove this section after creating your repo from this template, as the
 > workflow will be deleted.
 
-### [Fast Forward](./fast-forward.yml)
+## [Fast Forward](./fast-forward.yml)
 
 A workflow that allows using the `/fast-forward` command to complete a PR, and
 merge it with the `git merge --ff-only` strategy. This is paired with the
@@ -71,7 +71,7 @@ Replacing `FF_PAT` with the name of your access token.
 > [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens),
 > this workflow will not be able to trigger other workflows when merging.
 
-### [Lint Commits](./lint-commits.yml)
+## [Lint Commits](./lint-commits.yml)
 
 [lint-commits.yml](./lint-commits.yml) uses [git-cliff](https://git-cliff.org/)
 to lint all commits in the repo with every PR, ensuring that they conform to the
@@ -84,11 +84,27 @@ The main [cliff.toml](../../cliff.toml) is used as the configuration file to
 configure `git-cliff`, which should require conventional commits for this
 workflow to function correctly.
 
+## [Prep Build](./prep-build.yml)
+
+[Prep Build](./prep-build.yml) is a reusable workflow that can be used to
+prepare the variables used to build the LaTeX document, and prepare the
+changelog and upload it as an artifact.
+
+The prepared variables are:
+
+- The CHANGELOG (both as an artifact and variable containing the contents)
+- The versioned document name
+- The bumped version number
+
 ## [Pull Request](./pull-request.yml)
 
-This workflow simply monitors the commits in a PR, and checks whether they can
-be fast-forwarded. This is paired with the [fast forward](#fast-forward)
-workflow.
+This workflow simply monitors the commits in a PR, checks whether they can be
+fast-forwarded, and generates a preview CHANGELOG and PDF file that are posted
+as comments on the PR to allow review of the generated contents.
 
-This workflow is optional, and you can remove this workflow along with the
-[fast forward](#fast-forward) workflow to use GitHub's default merge strategies.
+This is paired with the [fast forward](#fast-forward) workflow to close PRs
+using the `git merge --ff-only` strategy.
+
+The `check-fast-forward` job in this workflow is optional, and you can remove
+this job along with the [fast forward](#fast-forward) workflow to use GitHub's
+default merge strategies.

@@ -9,7 +9,9 @@ name: Build and Release Document
 # Define environment variables for reuse in the workflow, so that they can be
 # easily updated in one place.
 env:
-  CLIFF_OUTPUT: CHANGELOG.md
+  CHANGELOG_ARTIFACT_NAME: changelog
+  CHANGELOG_NAME: CHANGELOG.md
+  DOCUMENT_ARTIFACT_NAME: latex-build
   DOCUMENT_BASE_NAME: ${{ github.event.repository.name }}
 
 # Releases will be triggered by changes pushed to main.
@@ -26,6 +28,10 @@ jobs:
     name: Evaluate Workflow Preconditions
     runs-on: ubuntu-latest
     outputs:
+      changelog_artifact_name: ${{ env.CHANGELOG_ARTIFACT_NAME }}
+      changelog_name: ${{ env.CHANGELOG_NAME }}
+      document_artifact_name: ${{ env.DOCUMENT_ARTIFACT_NAME }}
+      document_base_name: ${{ env.DOCUMENT_BASE_NAME }}
       should_run: ${{ steps.evaluate_run_conditions.outputs.should_run }}
     steps:
       - name: Checkout Repository
@@ -53,59 +59,11 @@ jobs:
     name: Prepare Version and Changelog
     needs: [eval]
     if: ${{ needs.eval.outputs.should_run == 'true' }}
-    runs-on: ubuntu-latest
-    outputs:
-      changelog: ${{ steps.git-cliff.outputs.content }}
-      filename: ${{ steps.generate-filename.outputs.filename }}
-      version: ${{ steps.sanitise-version.outputs.version }}
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 0  # Fetch full history for changelog generation.
-
-      # Use git-cliff to generate a changelog and determine the next version.
-      #
-      # This will generate a changelog for all unreleased changes and bump the
-      # version based on commit messages since the last tag.
-      - name: git-cliff
-        id: git-cliff
-        uses: orhun/git-cliff-action@v4
-        with:
-          version: latest
-          config: cliff.toml
-          args: "--unreleased --bump"
-        env:
-          OUTPUT: ${{ env.CLIFF_OUTPUT }}
-
-      # Upload the generated changelog for use in subsequent jobs.
-      - id: upload-changelog
-        name: Upload Changelog Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: changelog
-          path: ${{ env.CLIFF_OUTPUT }}
-          if-no-files-found: error
-
-      # Sanitise the version number to ensure it has a single 'v' prefix.
-      - name: Sanitise Version
-        id: sanitise-version
-        run: |
-          echo "Getting new version number..."
-          version="${{ steps.git-cliff.outputs.version }}"
-          echo "Original version: $version"
-          version="v${version//v}"
-          echo "Sanitised version: $version"
-          echo "version=$version" >> $GITHUB_OUTPUT
-
-      # Generate the file name for the PDF based on the base name and version.
-      - name: Generate File Name
-        id: generate-filename
-        run: |
-          echo "Generating filename for version ${{ steps.sanitise-version.outputs.version }}..."
-          filename="${{ env.DOCUMENT_BASE_NAME }}_${{ steps.sanitise-version.outputs.version }}"
-          echo "Generated filename: $filename"
-          echo "filename=$filename" >> $GITHUB_OUTPUT
+    uses: ./.github/workflows/prep-build.yml
+    with:
+      changelog-artifact-name: ${{ needs.eval.outputs.changelog_artifact_name }}
+      changelog-name: ${{ needs.eval.outputs.changelog_name }}
+      document-base-name: ${{ needs.eval.outputs.document_base_name }}
 
   build:
     name: Build LaTeX Document
@@ -113,8 +71,8 @@ jobs:
     if: ${{ needs.eval.outputs.should_run == 'true' }}
     uses: ./.github/workflows/build-latex.yml
     with:
-      artifact-name: latex-build
-      document-name: ${{ needs.prep.outputs.filename }}
+      artifact-name: ${{ needs.eval.outputs.document_artifact_name }}
+      document-name: ${{ needs.prep.outputs.document-name }}
 
   release:
     name: Create Release
@@ -127,15 +85,15 @@ jobs:
 
       - name: Download Build Artifacts
         id: download-latex
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
-          name: latex-build
+          name: ${{ needs.eval.outputs.document_artifact_name }}
 
       - name: Download Changelog Artifact
         id: download-changelog
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
-          name: changelog
+          name: ${{ needs.eval.outputs.changelog_artifact_name }}
 
       # Create a draft release with the generated changelog and attach the PDF.
       # This is needed for repos that use "immutable releases", since otherwise
@@ -151,7 +109,7 @@ jobs:
           body: ${{ needs.prep.outputs.changelog }}
           files: |
             ${{ steps.download-latex.outputs.download-path }}/*.pdf
-            ${{ steps.download-changelog.outputs.download-path }}/${{ env.CLIFF_OUTPUT }}
+            ${{ steps.download-changelog.outputs.download-path }}/${{ needs.eval.outputs.changelog_name }}
         env:
           GIT_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

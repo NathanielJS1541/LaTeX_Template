@@ -1,10 +1,17 @@
-# Workflow to check whether the commits in a PR can be fast-forwarded, and post
-# a comment on the PR with the result.
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2025 Nathaniel Struselis
 #
-# This workflow is based on the example from sequoia-pgp/fast-forward GitHub,
-# which is licensed under GPL v2: https://github.com/sequoia-pgp/fast-forward.
+# GitHub Actions workflow to check whether the commits in a PR can be
+# fast-forwarded, build a preview PDF and changelog, and post comments on the PR
+# with the fast forward status and previews.
 
-name: Check Pull Request for Fast Forward
+name: Check PR Fast Forward and Post Document Preview
+
+# Define environment variables for reuse in the workflow, so that they can be
+# easily updated in one place.
+env:
+  BOT_USER: github-actions[bot]
+  PR_COMMENT_TITLE: "# Document Preview"
 
 on:
   pull_request:
@@ -30,3 +37,92 @@ jobs:
         with:
           merge: false
           comment: always
+
+  changelog-preview:
+    name: Prepare Preview Version and Changelog
+    uses: ./.github/workflows/prep-build.yml
+    with:
+      # Checkout the PR head ref and repo to ensure the real commit information
+      # is available, and ensure PRs from forks are supported.
+      checkout-ref: ${{ github.event.pull_request.head.ref }}
+      checkout-repository: ${{ github.event.pull_request.head.repo.full_name }}
+
+  build-preview:
+    name: Build LaTeX Document Preview
+    needs: [changelog-preview]
+    uses: ./.github/workflows/build-latex.yml
+    with:
+      artifact-name: preview-build
+      # Checkout the PR head ref and repo to ensure the real commit information
+      # is available, and ensure PRs from forks are supported.
+      checkout-ref: ${{ github.event.pull_request.head.ref }}
+      checkout-repository: ${{ github.event.pull_request.head.repo.full_name }}
+      document-name: ${{ needs.changelog-preview.outputs.document-name }}
+
+  publish-preview:
+    name: Upload Preview Document and Changelog
+    needs: [changelog-preview, build-preview]
+    runs-on: ubuntu-latest
+
+    # Permissions required to post / update comments on the PR with the preview
+    # document and changelog.
+    permissions:
+      pull-requests: write
+      issues: write
+
+    steps:
+      - name: Download Preview Build Artifacts
+        id: download-latex-preview
+        uses: actions/download-artifact@v6
+        with:
+          name: preview-build
+
+      # Generate the comment to post on the PR containing the PDF and CHANGELOG
+      # previews.
+      - name: Generate PR Comment Content
+        id: generate-pr-comment
+        run: |
+          echo "Generating PR comment content..."
+
+          comment_content=$(cat <<EOF
+          ${{ env.PR_COMMENT_TITLE }}
+
+          [Download PDF Preview](${{ needs.build-preview.outputs.artifact-url }})
+
+          ${{ needs.changelog-preview.outputs.changelog }}
+          EOF)
+
+          echo "comment_content<<EOF" >> $GITHUB_OUTPUT
+          echo "$comment_content" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      # Find if there is an existing preview comment on the PR. If there is, it
+      # can be edited instead of creating a new comment.
+      - name: Find Existing Preview Comment
+        uses: peter-evans/find-comment@v4
+        id: find-comment
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: ${{ env.BOT_USER }}
+          body-includes: ${{ env.PR_COMMENT_TITLE }}
+          direction: last
+
+      # If no existing comment was found, create a new comment on the PR with
+      # the preview document and changelog.
+      - name: Create PR Preview Comment
+        if: ${{ steps.find-comment.outputs.comment-id == '' }}
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: ${{ steps.generate-pr-comment.outputs.comment_content }}
+
+      # If an existing comment was found, update it with the new preview
+      # document and changelog.
+      - name: Update PR Preview Comment
+        if: ${{ steps.find-comment.outputs.comment-id != '' }}
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          body: ${{ steps.generate-pr-comment.outputs.comment_content }}
+          edit-mode: replace
