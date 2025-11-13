@@ -36,6 +36,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 0  # Fetch all history for accurate commit count.
 
       # Evaluate whether the workflow should run or not.
       - name: Evaluate Run Conditions
