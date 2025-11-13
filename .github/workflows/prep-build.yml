@@ -6,7 +6,7 @@
 # Note that this workflow is intended to be called by other workflows. It is not
 # intended to be run directly.
 
-name: Build LaTeX Document
+name: Prepare LaTeX Build Variables
 
 # Define environment variables for reuse in the workflow, so that they can be
 # easily updated in one place.
